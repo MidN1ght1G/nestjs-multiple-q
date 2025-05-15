@@ -10,13 +10,18 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
-      urls: [configService.get<string>('RABBITMQ_URL')!],
-      queue: configService.get<string>('RABBITMQ_QUEUE')!,
-      queueOptions: { durable: false },
+      urls: [configService.get<string>('RABBITMQ_URI')].filter(
+        (url): url is string => !!url,
+      ),
+      queue: configService.get<string>('RABBITMQ_QUEUE'),
+      queueOptions: {
+        durable: false,
+      },
     },
   });
 
   await app.startAllMicroservices();
   await app.listen(3000);
+  console.log('HTTP server is running on http://localhost:3000');
 }
 bootstrap();

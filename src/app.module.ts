@@ -1,42 +1,22 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { MongooseModule } from '@nestjs/mongoose';
-import { AppController } from './controllers/app.controller';
-import { MessageProducer } from './producers/message.producer';
-import { MessageConsumer } from './consumers/message.consumer';
-import { RedisService } from './services/redis.service';
-import { MongoService } from './services/mongo.service';
+import { ConfigModule } from '@nestjs/config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { ProducerModule } from './producer/producer.module';
+import { ConsumerModule } from './consumer/consumer.module';
+import { RedisModule } from './redis/redis.module';
+import { MongoModule } from './mongo/mongo.module';
+import { ConsumerService } from './consumer/consumer.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-    MongooseModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI'),
-      }),
-    }),
-    ClientsModule.registerAsync([
-      {
-        name: 'RABBITMQ_SERVICE',
-        inject: [ConfigService],
-        useFactory: (configService: ConfigService) => ({
-          transport: Transport.RMQ,
-          options: {
-            urls: [configService.get<string>('RABBITMQ_URL')],
-            queue: configService.get<string>('RABBITMQ_QUEUE'),
-            queueOptions: {
-              durable: true,
-            },
-          },
-        }),
-      },
-    ]),
+    ConfigModule.forRoot({ isGlobal: true }),
+    ProducerModule,
+    ConsumerModule,
+    RedisModule,
+    MongoModule,
   ],
   controllers: [AppController],
-  providers: [MessageProducer, MessageConsumer, RedisService, MongoService],
+  providers: [AppService, ConsumerService],
 })
 export class AppModule {}
