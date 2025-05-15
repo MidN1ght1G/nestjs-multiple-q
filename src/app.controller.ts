@@ -1,21 +1,35 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { AppService } from './app.service';
-import { MessagePattern } from '@nestjs/microservices';
+import {
+  ClientProxy,
+  ClientProxyFactory,
+  Transport,
+} from '@nestjs/microservices';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  private client: ClientProxy;
 
-  @Post('publish')
-  publish(@Body() body: { key: string; value: string }) {
-    return this.appService.sendMessage(body);
+  constructor() {
+    this.client = ClientProxyFactory.create({
+      transport: Transport.RMQ,
+      options: {
+        urls: ['amqp://localhost:5672'],
+        queue: 'test_queue',
+        queueOptions: {
+          durable: false,
+        },
+      },
+    });
   }
 
-  // Add this message handler
-  @MessagePattern('test_queue')
-  async handleMessage(data: any) {
-    console.log('Received message from test_queue:', data);
-    // Process the message here
-    return { received: true };
+  @Post('/publish')
+  async publishMessage(@Body() body: { key: string; value: string }) {
+    const result = await this.client.emit('test_queue', body).toPromise();
+
+    console.log('Published to test_queue:', body);
+    return {
+      message: 'Published to test_queue',
+      data: body,
+    };
   }
 }

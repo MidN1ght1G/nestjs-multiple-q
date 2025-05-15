@@ -16,5 +16,6 @@ export class ConsumerService {
 
     await this.redisService.set(data.key, data.value, 3600);
     await this.mongoService.save(data);
+    console.log('Saved to MongoDB');
   }
 }

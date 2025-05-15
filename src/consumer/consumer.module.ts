@@ -4,6 +4,7 @@ import { RedisModule } from '../redis/redis.module';
 import { MongoModule } from '../mongo/mongo.module';
 
 @Module({
+  controllers: [ConsumerService],
   imports: [RedisModule, MongoModule],
   providers: [ConsumerService],
 })
