@@ -1,23 +1,25 @@
 import { MongooseModule } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProducerModule } from './producer/producer.module';
 import { ConsumerModule } from './consumer/consumer.module';
 import { RedisModule } from './redis/redis.module';
 import { MongoModule } from './mongo/mongo.module';
-import { Data, DataSchema } from './mongo/data.schema';
+import { LogSchema } from './mongo/data.schema';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-
-    MongooseModule.forRoot(
-      'mongodb://admin:password@localhost:27017/nestdb?authSource=admin',
-    ),
-
-    MongooseModule.forFeature([{ name: 'Data', schema: DataSchema }]),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGO_URI') || '',
+      }),
+      inject: [ConfigService],
+    }),
+    MongooseModule.forFeature([{ name: 'Data', schema: LogSchema }]),
 
     ProducerModule,
     ConsumerModule,

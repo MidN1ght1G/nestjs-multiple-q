@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Data } from './data.schema';
+import { Log } from './data.schema';
 
 @Injectable()
 export class MongoService {
-  constructor(@InjectModel(Data.name) private dataModel: Model<Data>) {}
+  constructor(@InjectModel(Log.name) private dataModel: Model<Log>) {}
 
   async save(data: { key: string; value: string }) {
     console.log('Saving to MongoDB:', data);

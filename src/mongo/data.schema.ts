@@ -1,13 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Model } from 'mongoose';
 
-@Schema()
-export class Data extends Document {
+@Schema({ timestamps: true })
+export class Log {
   @Prop()
-  key: string;
+  queue: string;
 
-  @Prop()
-  value: string;
+  @Prop({ type: Object })
+  data: any;
 }
 
-export const DataSchema = SchemaFactory.createForClass(Data);
+export type LogDocument = Log & Document;
+export const LogSchema = SchemaFactory.createForClass(Log);
+export type LogModel = Model<LogDocument>;
