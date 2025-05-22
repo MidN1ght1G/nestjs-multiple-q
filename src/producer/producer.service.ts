@@ -15,6 +15,7 @@ export class ProducerService implements OnModuleInit {
       transport: Transport.RMQ,
       options: { urls: [uri], queue: this.config.get('RABBITMQ_QUEUE_A') },
     });
+
     this.clientB = ClientProxyFactory.create({
       transport: Transport.RMQ,
       options: { urls: [uri], queue: this.config.get('RABBITMQ_QUEUE_B') },

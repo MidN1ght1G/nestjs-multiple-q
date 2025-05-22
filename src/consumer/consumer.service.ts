@@ -19,7 +19,7 @@ export class ConsumerService {
     await this.logModel.create({ queue: 'A', data });
   }
 
-  @EventPattern('test_queue_a')
+  @EventPattern('test_queue_b')
   async handleTaskB(@Payload() data: any) {
     console.log('Received task_B:', data);
     await this.redis.set(`task_B:${Date.now()}`, JSON.stringify(data), 3600);

@@ -9,7 +9,7 @@ async function bootstrap() {
 
   const rabbitUri = configService.get<string>('RABBITMQ_URI') ?? '';
   const queueA = configService.get<string>('RABBITMQ_QUEUE_A') ?? '';
-  const queueB = configService.get<string>('RABBITMQ_QUEUE_ฺB') ?? '';
+  const queueB = configService.get<string>('RABBITMQ_QUEUE_B') ?? '';
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
@@ -21,6 +21,7 @@ async function bootstrap() {
       },
     },
   });
+
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
@@ -32,7 +33,7 @@ async function bootstrap() {
     },
   });
 
-  await app.startAllMicroservices(); // สำคัญ
+  await app.startAllMicroservices();
   await app.listen(3000);
   console.log('Main app running on http://localhost:3000');
 }

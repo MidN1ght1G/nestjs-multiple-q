@@ -8,6 +8,9 @@ import { ConsumerModule } from './consumer/consumer.module';
 import { RedisModule } from './redis/redis.module';
 import { MongoModule } from './mongo/mongo.module';
 import { LogSchema } from './mongo/data.schema';
+import { FtpModule } from './ftp/ftp.module';
+import { SftpModule } from './sftp/sftp.module';
+import { RabbitmqModule } from './rabbitmq.module';
 
 @Module({
   imports: [
@@ -19,12 +22,14 @@ import { LogSchema } from './mongo/data.schema';
       }),
       inject: [ConfigService],
     }),
-    MongooseModule.forFeature([{ name: 'Data', schema: LogSchema }]),
-
+    MongooseModule.forFeature([{ name: 'Log', schema: LogSchema }]),
     ProducerModule,
     ConsumerModule,
     RedisModule,
     MongoModule,
+    FtpModule,
+    SftpModule,
+    RabbitmqModule,
   ],
   controllers: [AppController],
   providers: [AppService],

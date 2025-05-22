@@ -1,18 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Log, LogSchema } from './data.schema';
-import { ConfigService } from '@nestjs/config';
+import { MongoService } from './mongo.service';
 
 @Module({
-  imports: [
-    MongooseModule.forRootAsync({
-      useFactory: (config: ConfigService) => ({
-        uri: config.get('MONGO_URI'),
-      }),
-      inject: [ConfigService],
-    }),
-    MongooseModule.forFeature([{ name: Log.name, schema: LogSchema }]),
-  ],
-  exports: [MongooseModule],
+  imports: [MongooseModule.forFeature([{ name: Log.name, schema: LogSchema }])],
+  providers: [MongoService],
+  exports: [MongoService],
 })
 export class MongoModule {}
